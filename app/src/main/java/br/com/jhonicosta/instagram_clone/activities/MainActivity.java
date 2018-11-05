@@ -1,7 +1,9 @@
-package br.com.jhonicosta.instagram_clone;
+package br.com.jhonicosta.instagram_clone.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import br.com.jhonicosta.instagram_clone.R;
 
 public class MainActivity extends AppCompatActivity {
 
