@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "239781998140",
+    "firebase_url": "https://instagram-clone-f5a04.firebaseio.com",
+    "project_id": "instagram-clone-f5a04",
+    "storage_bucket": "instagram-clone-f5a04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239781998140:android:68e4bb864b4a4829",
+        "android_client_info": {
+          "package_name": "br.com.jhonicosta.instagram_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239781998140-nndhcrcf06qspvgkvcbikqa2os0htm5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.jhonicosta.instagram_clone",
+            "certificate_hash": "c176dae02108385d589118c3d95a5d63e5da8af5"
+          }
+        },
+        {
+          "client_id": "239781998140-qmpjaivplekvbo54hplclhqcclfhrnqp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_-LmrH3cxYAInBFE3tUTbnN7HuTPd24U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239781998140-qmpjaivplekvbo54hplclhqcclfhrnqp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
