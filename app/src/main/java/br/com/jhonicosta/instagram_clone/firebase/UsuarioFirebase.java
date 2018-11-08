@@ -1,8 +1,8 @@
 package br.com.jhonicosta.instagram_clone.firebase;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -10,10 +10,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
-import br.com.jhonicosta.instagram_clone.activities.CadastroActivity;
 import br.com.jhonicosta.instagram_clone.activities.MainActivity;
 import br.com.jhonicosta.instagram_clone.config.FirebaseConfig;
 import br.com.jhonicosta.instagram_clone.model.Usuario;
@@ -21,15 +21,14 @@ import br.com.jhonicosta.instagram_clone.model.Usuario;
 public class UsuarioFirebase {
 
     private FirebaseAuth auth;
-    private CadastroActivity activity;
+    private Activity activity;
 
-    public UsuarioFirebase(CadastroActivity activity) {
+    public UsuarioFirebase(Activity activity) {
         this.activity = activity;
         this.auth = FirebaseConfig.getFirebaseAuth();
     }
 
     public void cadastrar(final Usuario usuario) {
-        activity.getProgressBar().setVisibility(View.VISIBLE);
 
         auth.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -40,7 +39,6 @@ public class UsuarioFirebase {
                             activity.startActivity(new Intent(activity.getApplicationContext(), MainActivity.class));
                             activity.finish();
                         } else {
-                            activity.getProgressBar().setVisibility(View.GONE);
 
                             String exception = "";
                             try {
@@ -60,5 +58,39 @@ public class UsuarioFirebase {
                         }
                     }
                 });
+    }
+
+    public void logar(Usuario usuario) {
+        auth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            activity.startActivity(new Intent(activity, MainActivity.class));
+                            activity.finish();
+                        } else {
+                            String exception = "";
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                exception = "E-mail e senha não conferem não conferem!";
+                            } catch (FirebaseAuthInvalidUserException e) {
+                                exception = "Usuário não cadastrado";
+                            } catch (Exception e) {
+                                exception = "Não foi possivel conectar com o servidor, tente novamente mais tarde..." + e.getMessage();
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(activity, exception, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    public void isAuth(){
+        if(auth.getCurrentUser() != null){
+            activity.startActivity(new Intent(activity, MainActivity.class));
+            activity.finish();
+        }
     }
 }

@@ -32,12 +32,14 @@ public class CadastroActivity extends AppCompatActivity {
         emailBox = findViewById(R.id.cadastro_edit_email);
         senhaBox = findViewById(R.id.cadastro_edit_password);
         btnCadastrar = findViewById(R.id.cadastro_botao_cadastrar);
-        progressBar = findViewById(R.id.cadastro_progress_bar);
+        progressBar = findViewById(R.id.login_progress_bar);
 
         progressBar.setVisibility(View.GONE);
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+
                 usuario = new Usuario();
 
                 usuario.setNome(nomeBox.getText().toString());
@@ -48,6 +50,7 @@ public class CadastroActivity extends AppCompatActivity {
                     if (!usuario.getEmail().isEmpty()) {
                         if (!usuario.getSenha().isEmpty()) {
                             firebase.cadastrar(usuario);
+                            progressBar.setVisibility(View.GONE);
                         } else {
                             Toast.makeText(getApplicationContext(), "Informe uma senha!", Toast.LENGTH_SHORT).show();
                         }
