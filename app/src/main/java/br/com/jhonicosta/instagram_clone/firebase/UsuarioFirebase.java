@@ -87,10 +87,18 @@ public class UsuarioFirebase {
                 });
     }
 
-    public void isAuth(){
-        if(auth.getCurrentUser() != null){
+    public void isAuth() {
+        if (auth.getCurrentUser() != null) {
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
+        }
+    }
+
+    public void signOut() {
+        try {
+            auth.signOut();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

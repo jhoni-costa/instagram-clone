@@ -27,10 +27,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        firebase.isAuth();
 
         usuario = new Usuario();
         firebase = new UsuarioFirebase(this);
+
+        firebase.isAuth();
 
         emailBox = findViewById(R.id.login_edit_email);
         emailBox.requestFocus();
