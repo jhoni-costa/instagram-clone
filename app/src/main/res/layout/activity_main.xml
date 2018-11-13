@@ -9,20 +9,15 @@
 
     <include layout="@layout/toolbar" />
 
-    <android.support.constraint.ConstraintLayout
+    <FrameLayout
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1" />
 
+    <include
+        layout="@layout/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
 
-        <include
-            layout="@layout/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
 </LinearLayout>
