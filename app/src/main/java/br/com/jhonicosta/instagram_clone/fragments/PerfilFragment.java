@@ -1,4 +1,4 @@
-package br.com.jhonicosta.instagram_clone.fragmensts;
+package br.com.jhonicosta.instagram_clone.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,32 +17,40 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PerfilFragment extends Fragment {
 
+
     private ProgressBar progressBar;
     private CircleImageView imagePerfil;
-    public GridView gridView;
-    private TextView qtdPublicacoes, qtdSeguidores, qtdSeguindo;
-    private Button btnEditarPerfil;
+    public GridView gridViewPerfil;
+    private TextView textPublicacoes, textSeguidores, textSeguindo;
+    private Button buttonEditarPerfil;
+
 
     public PerfilFragment() {
+        // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_perfil, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
+        //Configurações dos componentes
+        gridViewPerfil = view.findViewById(R.id.gridViewPerfil);
         progressBar = view.findViewById(R.id.progressBarPerfil);
         imagePerfil = view.findViewById(R.id.imagePerfil);
-        gridView = view.findViewById(R.id.gripPerfil);
-        qtdPublicacoes = view.findViewById(R.id.qtdPublicacoes);
-        qtdSeguidores = view.findViewById(R.id.qtdSeguidores);
-        qtdSeguindo = view.findViewById(R.id.qtdSeguindo);
-        btnEditarPerfil = view.findViewById(R.id.buttonEditarPerfil);
+        textPublicacoes = view.findViewById(R.id.textPublicacoes);
+        textSeguidores = view.findViewById(R.id.textSeguidores);
+        textSeguindo = view.findViewById(R.id.textSeguindo);
+        buttonEditarPerfil = view.findViewById(R.id.buttonEditarPerfil);
 
-        btnEditarPerfil.setOnClickListener(new View.OnClickListener() {
+        //Abre edição de perfil
+        buttonEditarPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), EditarPerfilActivity.class));
+                Intent i = new Intent(getActivity(), EditarPerfilActivity.class);
+                startActivity(i);
             }
         });
 

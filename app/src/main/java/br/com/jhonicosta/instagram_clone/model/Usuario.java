@@ -1,20 +1,26 @@
 package br.com.jhonicosta.instagram_clone.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
-public class Usuario implements Serializable {
+import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 
-    private String id, nome, email, senha, urlFoto;
+public class Usuario implements Serializable {
+    private String id;
+    private String nome;
+    private String email;
+    private String senha;
+    private String caminhoFoto;
 
     public Usuario() {
     }
 
-    public Usuario(String id, String nome, String email, String senha, String urlFoto) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.urlFoto = urlFoto;
+    public void salvar() {
+        DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebase();
+        DatabaseReference usuariosRef = firebaseRef.child("usuarios").child(getId());
+        usuariosRef.setValue(this);
     }
 
     public String getId() {
@@ -41,6 +47,7 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
+    @Exclude
     public String getSenha() {
         return senha;
     }
@@ -49,11 +56,11 @@ public class Usuario implements Serializable {
         this.senha = senha;
     }
 
-    public String getUrlFoto() {
-        return urlFoto;
+    public String getCaminhoFoto() {
+        return caminhoFoto;
     }
 
-    public void setUrlFoto(String urlFoto) {
-        this.urlFoto = urlFoto;
+    public void setCaminhoFoto(String caminhoFoto) {
+        this.caminhoFoto = caminhoFoto;
     }
 }

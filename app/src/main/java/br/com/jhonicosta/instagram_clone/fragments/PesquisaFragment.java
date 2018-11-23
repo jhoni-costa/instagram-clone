@@ -1,4 +1,4 @@
-package br.com.jhonicosta.instagram_clone.fragmensts;
+package br.com.jhonicosta.instagram_clone.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,15 +8,14 @@ import android.view.ViewGroup;
 
 import br.com.jhonicosta.instagram_clone.R;
 
-public class PostagemFragment extends Fragment {
+public class PesquisaFragment extends Fragment {
 
-    public PostagemFragment() {
+    public PesquisaFragment() {
     }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_postagem, container, false);
+        return inflater.inflate(R.layout.fragment_pesquisa, container, false);
     }
 
 }

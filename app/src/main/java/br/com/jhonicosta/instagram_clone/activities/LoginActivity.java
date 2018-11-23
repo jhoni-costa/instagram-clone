@@ -1,67 +1,125 @@
 package br.com.jhonicosta.instagram_clone.activities;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 import br.com.jhonicosta.instagram_clone.R;
-import br.com.jhonicosta.instagram_clone.firebase.UsuarioFirebase;
+import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.model.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextView cadastrar;
-    private EditText emailBox, senhaBox;
+
+    private EditText campoEmail, campoSenha;
+    private Button botaoEntrar;
     private ProgressBar progressBar;
 
     private Usuario usuario;
-    private UsuarioFirebase firebase;
+
+    private FirebaseAuth autenticacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        verificarUsuarioLogado();
+        inicializarComponentes();
 
-        usuario = new Usuario();
-        firebase = new UsuarioFirebase(this);
-
-        firebase.isAuth();
-
-        emailBox = findViewById(R.id.login_edit_email);
-        emailBox.requestFocus();
-        senhaBox = findViewById(R.id.login_edit_password);
-        progressBar = findViewById(R.id.login_progress_bar);
-
-        cadastrar = findViewById(R.id.login_txt_cadastrar);
-        cadastrar.setOnClickListener(new View.OnClickListener() {
+        //Fazer login do usuario
+        progressBar.setVisibility(View.GONE);
+        botaoEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, CadastroActivity.class));
+
+                String textoEmail = campoEmail.getText().toString();
+                String textosenha = campoSenha.getText().toString();
+
+                if (!textoEmail.isEmpty()) {
+                    if (!textosenha.isEmpty()) {
+
+                        usuario = new Usuario();
+                        usuario.setEmail(textoEmail);
+                        usuario.setSenha(textosenha);
+                        validarLogin(usuario);
+
+                    } else {
+                        Toast.makeText(LoginActivity.this,
+                                "Preencha a senha!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this,
+                            "Preencha o e-mail!",
+                            Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
+
     }
 
-    public void login(View view) {
-        usuario.setEmail(emailBox.getText().toString());
-        usuario.setSenha(senhaBox.getText().toString());
+    public void verificarUsuarioLogado() {
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        if (autenticacao.getCurrentUser() != null) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
+        }
+    }
+
+    public void validarLogin(Usuario usuario) {
 
         progressBar.setVisibility(View.VISIBLE);
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
-        if (!usuario.getEmail().isEmpty()) {
-            if (!usuario.getSenha().isEmpty()) {
-                firebase.logar(usuario);
-                progressBar.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(getApplicationContext(), "Preencha a senha corretamente!", Toast.LENGTH_SHORT).show();
+        autenticacao.signInWithEmailAndPassword(
+                usuario.getEmail(),
+                usuario.getSenha()
+        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if (task.isSuccessful()) {
+                    progressBar.setVisibility(View.GONE);
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this,
+                            "Erro ao fazer login",
+                            Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                }
+
             }
-        } else {
-            Toast.makeText(getApplicationContext(), "Preencha o e-mail corretamente!", Toast.LENGTH_SHORT).show();
-        }
+        });
+
+    }
+
+    public void abrirCadastro(View view) {
+        Intent i = new Intent(LoginActivity.this, CadastroActivity.class);
+        startActivity(i);
+    }
+
+    public void inicializarComponentes() {
+
+        campoEmail = findViewById(R.id.editLoginEmail);
+        campoSenha = findViewById(R.id.editLoginSenha);
+        botaoEntrar = findViewById(R.id.buttonEntrar);
+        progressBar = findViewById(R.id.progressLogin);
+
+        campoEmail.requestFocus();
+
     }
 }
