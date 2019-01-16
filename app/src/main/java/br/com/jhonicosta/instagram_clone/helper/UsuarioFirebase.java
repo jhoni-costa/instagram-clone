@@ -1,5 +1,6 @@
 package br.com.jhonicosta.instagram_clone.helper;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -18,6 +19,10 @@ public class UsuarioFirebase {
         return usuario.getCurrentUser();
     }
 
+    public static String getIdUsuario() {
+        return getUsuarioAtual().getUid();
+    }
+
     public static void atualizarNomeUsuario(String nome) {
 
         try {
@@ -34,6 +39,31 @@ public class UsuarioFirebase {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (!task.isSuccessful()) {
                         Log.d("Perfil", "Erro ao atualizar nome de perfil");
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarFotoUsuario(Uri url) {
+
+        try {
+
+            FirebaseUser usuarioLogado = getUsuarioAtual();
+
+            UserProfileChangeRequest profile = new UserProfileChangeRequest
+                    .Builder()
+                    .setPhotoUri(url)
+                    .build();
+
+            usuarioLogado.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (!task.isSuccessful()) {
+                        Log.d("Perfil", "Erro ao atualizar foto de perfil");
                     }
                 }
             });
