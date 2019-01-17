@@ -15,11 +15,13 @@ import br.com.jhonicosta.instagram_clone.model.Usuario;
 public class UsuarioFirebase {
 
     public static FirebaseUser getUsuarioAtual() {
+
         FirebaseAuth usuario = ConfiguracaoFirebase.getFirebaseAutenticacao();
         return usuario.getCurrentUser();
+
     }
 
-    public static String getIdUsuario() {
+    public static String getIdentificadorUsuario() {
         return getUsuarioAtual().getUid();
     }
 
@@ -27,18 +29,19 @@ public class UsuarioFirebase {
 
         try {
 
+            //Usuario logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
+            //Configurar objeto para alteração do perfil
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setDisplayName(nome)
                     .build();
-
             usuarioLogado.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (!task.isSuccessful()) {
-                        Log.d("Perfil", "Erro ao atualizar nome de perfil");
+                        Log.d("Perfil", "Erro ao atualizar nome de perfil.");
                     }
                 }
             });
@@ -46,24 +49,26 @@ public class UsuarioFirebase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public static void atualizarFotoUsuario(Uri url) {
 
         try {
 
+            //Usuario logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
+            //Configurar objeto para alteração do perfil
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setPhotoUri(url)
                     .build();
-
             usuarioLogado.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (!task.isSuccessful()) {
-                        Log.d("Perfil", "Erro ao atualizar foto de perfil");
+                        Log.d("Perfil", "Erro ao atualizar a foto de perfil.");
                     }
                 }
             });
@@ -71,6 +76,7 @@ public class UsuarioFirebase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public static Usuario getDadosUsuarioLogado() {
@@ -81,11 +87,14 @@ public class UsuarioFirebase {
         usuario.setEmail(firebaseUser.getEmail());
         usuario.setNome(firebaseUser.getDisplayName());
         usuario.setId(firebaseUser.getUid());
-        usuario.setCaminhoFoto("");
 
-        if (!(firebaseUser.getPhotoUrl() == null)) {
+        if (firebaseUser.getPhotoUrl() == null) {
+            usuario.setCaminhoFoto("");
+        } else {
             usuario.setCaminhoFoto(firebaseUser.getPhotoUrl().toString());
         }
+
         return usuario;
+
     }
 }
