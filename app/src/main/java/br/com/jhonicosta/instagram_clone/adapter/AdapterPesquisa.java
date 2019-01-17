@@ -38,11 +38,12 @@ public class AdapterPesquisa extends RecyclerView.Adapter<AdapterPesquisa.MyView
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         Usuario usuario = listaUsuario.get(i);
         myViewHolder.nome.setText(usuario.getNome());
+        myViewHolder.foto.setImageResource(R.drawable.avatar);
+
         if (usuario.getCaminhoFoto() != null) {
+            myViewHolder.foto.setImageResource(R.drawable.avatar);
             Uri uri = Uri.parse(usuario.getCaminhoFoto());
             Glide.with(context).load(uri).into(myViewHolder.foto);
-        } else {
-            myViewHolder.foto.setImageResource(R.drawable.avatar);
         }
     }
 

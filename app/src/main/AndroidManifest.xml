@@ -24,7 +24,8 @@
             android:theme="@style/AppThemeLogin" />
         <activity
             android:name=".activities.EditarPerfilActivity"
-            android:parentActivityName=".activities.MainActivity"></activity>
+            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.PerfilAmigoActivity"></activity>
     </application>
 
 </manifest>

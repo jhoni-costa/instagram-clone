@@ -43,7 +43,7 @@ public class PerfilFragment extends Fragment {
         textPublicacoes = view.findViewById(R.id.textPublicacoes);
         textSeguidores = view.findViewById(R.id.textSeguidores);
         textSeguindo = view.findViewById(R.id.textSeguindo);
-        buttonEditarPerfil = view.findViewById(R.id.buttonEditarPerfil);
+        buttonEditarPerfil = view.findViewById(R.id.buttonAcaoPerfil);
 
         //Abre edição de perfil
         buttonEditarPerfil.setOnClickListener(new View.OnClickListener() {
