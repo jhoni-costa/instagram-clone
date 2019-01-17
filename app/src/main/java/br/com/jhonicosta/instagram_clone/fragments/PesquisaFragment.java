@@ -3,6 +3,7 @@ package br.com.jhonicosta.instagram_clone.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
+import br.com.jhonicosta.instagram_clone.adapter.AdapterPesquisa;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.model.Usuario;
 
@@ -30,6 +32,8 @@ public class PesquisaFragment extends Fragment {
 
     private List<Usuario> listaUsuarios = new ArrayList<>();
     private DatabaseReference usuariosRef;
+
+    private AdapterPesquisa adapterPesquisa;
 
     public PesquisaFragment() {
     }
@@ -42,6 +46,13 @@ public class PesquisaFragment extends Fragment {
         recyclerView = view.findViewById(R.id.reciclerViewPesquisa);
 
         usuariosRef = ConfiguracaoFirebase.getFirebase().child("usuarios");
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        adapterPesquisa = new AdapterPesquisa(listaUsuarios, getActivity());
+        recyclerView.setAdapter(adapterPesquisa);
+
 
         searchView.setQueryHint("Buscar usuários");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -64,7 +75,7 @@ public class PesquisaFragment extends Fragment {
     private void pesquisarUsuarios(String texto) {
         listaUsuarios.clear();
 
-        if (texto.length() > 0) {
+        if (texto.length() >= 2) {
             Query query = usuariosRef.orderByChild("nome")
                     .startAt(texto)
                     .endAt(texto + "\uf8ff");
@@ -72,12 +83,13 @@ public class PesquisaFragment extends Fragment {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    listaUsuarios.clear();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         listaUsuarios.add(ds.getValue(Usuario.class));
                     }
-
-                    int total = listaUsuarios.size();
-                    Log.i("totalUsuarios", "total " + total);
+                    adapterPesquisa.notifyDataSetChanged();
+//                    int total = listaUsuarios.size();
+//                    Log.i("totalUsuarios", "total " + total);
                 }
 
                 @Override
