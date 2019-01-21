@@ -10,12 +10,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.zomato.photofilters.FilterPack;
+import com.zomato.photofilters.imageprocessors.Filter;
+
 import br.com.jhonicosta.instagram_clone.R;
 
 public class FiltroActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("NativeImageProcessor");
+    }
+
     private ImageView foto;
-    private Bitmap imagem;
+    private Bitmap imagem, imagemFiltro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,11 @@ public class FiltroActivity extends AppCompatActivity {
             byte[] dados = bundle.getByteArray("fotoEscolhida");
             imagem = BitmapFactory.decodeByteArray(dados, 0, dados.length);
             foto.setImageBitmap(imagem);
+
+            imagemFiltro = imagem.copy(imagem.getConfig(), true);
+            Filter filter = FilterPack.getAmazonFilter(getApplicationContext());
+            foto.setImageBitmap(filter.processFilter(imagemFiltro));
+
         }
     }
 
