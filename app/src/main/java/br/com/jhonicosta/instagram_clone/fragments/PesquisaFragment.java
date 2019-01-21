@@ -27,6 +27,7 @@ import br.com.jhonicosta.instagram_clone.activities.PerfilAmigoActivity;
 import br.com.jhonicosta.instagram_clone.adapter.AdapterPesquisa;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.RecyclerItemClickListener;
+import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
 import br.com.jhonicosta.instagram_clone.model.Usuario;
 
 public class PesquisaFragment extends Fragment {
@@ -38,6 +39,8 @@ public class PesquisaFragment extends Fragment {
     private DatabaseReference usuariosRef;
 
     private AdapterPesquisa adapterPesquisa;
+
+    private String idUsuarioLogado;
 
     public PesquisaFragment() {
     }
@@ -56,6 +59,7 @@ public class PesquisaFragment extends Fragment {
 
         adapterPesquisa = new AdapterPesquisa(listaUsuarios, getActivity());
         recyclerView.setAdapter(adapterPesquisa);
+        idUsuarioLogado = UsuarioFirebase.getIdentificadorUsuario();
 
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(
                 getActivity(),
@@ -113,7 +117,13 @@ public class PesquisaFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     listaUsuarios.clear();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        listaUsuarios.add(ds.getValue(Usuario.class));
+                        Usuario usuario = ds.getValue(Usuario.class);
+
+                        if (usuario.getId().equals(idUsuarioLogado))
+                            continue;
+
+                        listaUsuarios.add(usuario);
+
                     }
                     adapterPesquisa.notifyDataSetChanged();
 //                    int total = listaUsuarios.size();
