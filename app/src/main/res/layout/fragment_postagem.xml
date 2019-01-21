@@ -1,15 +1,23 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     tools:context="fragments.PostagemFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Postagem"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_galeria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Abrir Galeria" />
+
+    <Button
+        android:id="@+id/btn_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Abrir Câmera" />
+</LinearLayout>
