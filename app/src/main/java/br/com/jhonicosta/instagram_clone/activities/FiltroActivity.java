@@ -2,6 +2,9 @@ package br.com.jhonicosta.instagram_clone.activities;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,18 +17,27 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.utils.ThumbnailItem;
 import com.zomato.photofilters.utils.ThumbnailsManager;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
 import br.com.jhonicosta.instagram_clone.adapter.AdapterMiniaturas;
+import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.RecyclerItemClickListener;
+import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
+import br.com.jhonicosta.instagram_clone.model.Postagem;
 
 public class FiltroActivity extends AppCompatActivity {
 
@@ -36,7 +48,9 @@ public class FiltroActivity extends AppCompatActivity {
     private ImageView foto;
     private Bitmap imagem, imagemFiltro;
     private List<ThumbnailItem> listaFiltros;
+    private String idUsuarioLogado;
 
+    private TextInputEditText textDescricao;
     private RecyclerView recyclerFiltros;
     private AdapterMiniaturas adapterMiniaturas;
 
@@ -48,6 +62,9 @@ public class FiltroActivity extends AppCompatActivity {
         listaFiltros = new ArrayList<>();
         foto = findViewById(R.id.imagemFoto);
         recyclerFiltros = findViewById(R.id.recyclerFiltros);
+        idUsuarioLogado = UsuarioFirebase.getIdentificadorUsuario();
+        textDescricao = findViewById(R.id.textDescricaoFiltro);
+
 
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("Filtros");
@@ -60,6 +77,7 @@ public class FiltroActivity extends AppCompatActivity {
         if (bundle != null) {
             byte[] dados = bundle.getByteArray("fotoEscolhida");
             imagem = BitmapFactory.decodeByteArray(dados, 0, dados.length);
+            imagemFiltro = imagem.copy(imagem.getConfig(), true);
             foto.setImageBitmap(imagem);
 
             adapterMiniaturas = new AdapterMiniaturas(listaFiltros, getApplicationContext());
@@ -124,10 +142,52 @@ public class FiltroActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ic_salvar_postagem:
-
+                publicarPostagem();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void publicarPostagem() {
+        final Postagem postagem = new Postagem();
+        postagem.setIdUsuario(idUsuarioLogado);
+        postagem.setDescricao(textDescricao.getText().toString());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imagemFiltro.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        byte[] dadosImagem = baos.toByteArray();
+
+        StorageReference storageReference = ConfiguracaoFirebase.getFirebaseStorage();
+        StorageReference imagemRef = storageReference
+                .child("imagens")
+                .child("postagens")
+                .child(postagem.getId() + ".jpeg");
+
+        UploadTask uploadTask = imagemRef.putBytes(dadosImagem);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(FiltroActivity.this,
+                        "Erro ao salvar  imagem",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                //Recuperar local da foto
+                Uri url = taskSnapshot.getDownloadUrl();
+                postagem.setCaminhoFoto(url.toString());
+
+                if (postagem.salvar()) {
+                    Toast.makeText(FiltroActivity.this,
+                            "Sucesso ao salvar postagem!",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        });
+
     }
 
     @Override
