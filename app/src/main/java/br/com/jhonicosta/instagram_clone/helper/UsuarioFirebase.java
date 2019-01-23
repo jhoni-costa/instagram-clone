@@ -15,10 +15,8 @@ import br.com.jhonicosta.instagram_clone.model.Usuario;
 public class UsuarioFirebase {
 
     public static FirebaseUser getUsuarioAtual() {
-
         FirebaseAuth usuario = ConfiguracaoFirebase.getFirebaseAutenticacao();
         return usuario.getCurrentUser();
-
     }
 
     public static String getIdentificadorUsuario() {
@@ -26,13 +24,10 @@ public class UsuarioFirebase {
     }
 
     public static void atualizarNomeUsuario(String nome) {
-
         try {
 
-            //Usuario logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
-            //Configurar objeto para alteração do perfil
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setDisplayName(nome)
@@ -49,17 +44,12 @@ public class UsuarioFirebase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public static void atualizarFotoUsuario(Uri url) {
-
         try {
-
-            //Usuario logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
-            //Configurar objeto para alteração do perfil
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setPhotoUri(url)
@@ -76,11 +66,9 @@ public class UsuarioFirebase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public static Usuario getDadosUsuarioLogado() {
-
         FirebaseUser firebaseUser = getUsuarioAtual();
 
         Usuario usuario = new Usuario();
@@ -95,7 +83,5 @@ public class UsuarioFirebase {
         }
 
         return usuario;
-
     }
-
 }

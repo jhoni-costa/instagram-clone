@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +34,11 @@ public class PesquisaFragment extends Fragment {
     private SearchView searchView;
     private RecyclerView recyclerView;
 
-    private List<Usuario> listaUsuarios = new ArrayList<>();
     private DatabaseReference usuariosRef;
 
     private AdapterPesquisa adapterPesquisa;
 
+    private List<Usuario> listaUsuarios = new ArrayList<>();
     private String idUsuarioLogado;
 
     public PesquisaFragment() {
@@ -126,8 +125,6 @@ public class PesquisaFragment extends Fragment {
 
                     }
                     adapterPesquisa.notifyDataSetChanged();
-//                    int total = listaUsuarios.size();
-//                    Log.i("totalUsuarios", "total " + total);
                 }
 
                 @Override

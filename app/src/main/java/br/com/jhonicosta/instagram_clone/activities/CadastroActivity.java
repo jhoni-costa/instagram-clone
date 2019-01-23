@@ -40,7 +40,6 @@ public class CadastroActivity extends AppCompatActivity {
 
         inicializarComponentes();
 
-        //Cadastrar usuario
         progressBar.setVisibility(View.GONE);
         botaoCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,17 +75,11 @@ public class CadastroActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
 
-
             }
         });
 
-
     }
 
-    /**
-     * Método responsável por cadastrar usuário com e-mail e senha
-     * e fazer validações ao fazer o cadastro
-     */
     public void cadastrar(final Usuario usuario) {
 
         progressBar.setVisibility(View.VISIBLE);
@@ -106,7 +99,6 @@ public class CadastroActivity extends AppCompatActivity {
 
                                 progressBar.setVisibility(View.GONE);
 
-                                //Salvar dados no firebase
                                 String idUsuario = task.getResult().getUser().getUid();
                                 usuario.setId(idUsuario);
                                 usuario.salvar();

@@ -12,7 +12,6 @@ public class ConfiguracaoFirebase {
     private static FirebaseAuth referenciaAutenticacao;
     private static StorageReference storage;
 
-    //retorna a referencia do database
     public static DatabaseReference getFirebase() {
         if (referenciaFirebase == null) {
             referenciaFirebase = FirebaseDatabase.getInstance().getReference();
@@ -20,7 +19,6 @@ public class ConfiguracaoFirebase {
         return referenciaFirebase;
     }
 
-    //retorna a instancia do FirebaseAuth
     public static FirebaseAuth getFirebaseAutenticacao() {
         if (referenciaAutenticacao == null) {
             referenciaAutenticacao = FirebaseAuth.getInstance();

@@ -35,39 +35,38 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PerfilAmigoActivity extends AppCompatActivity {
 
-    private Usuario usuarioSelecionado;
-    private Usuario usuarioLogado;
     private Button buttonAcaoPerfil;
     private CircleImageView imagePerfil;
     private TextView textPublicacoes, textSeguidores, textSeguindo;
     private GridView gridViewPerfil;
 
     private AdapterGrid adapterGrid;
+
     private DatabaseReference firebaseRef;
     private DatabaseReference usuariosRef;
     private DatabaseReference usuarioAmigoRef;
     private DatabaseReference usuarioLogadoRef;
     private DatabaseReference seguidoresRef;
+    private DatabaseReference postagensUsuarioRef;
     private ValueEventListener valueEventListenerPerfilAmigo;
 
+    private Usuario usuarioSelecionado;
+    private Usuario usuarioLogado;
+
     private String idUsuarioLogado;
-    private DatabaseReference postagensUsuarioRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_amigo);
 
-        //Configurações iniciais
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         usuariosRef = firebaseRef.child("usuarios");
         seguidoresRef = firebaseRef.child("seguidores");
         idUsuarioLogado = UsuarioFirebase.getIdentificadorUsuario();
 
-        //Inicializar componentes
         inicializarComponentes();
 
-        //Configura toolbar
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("Pefil");
         setSupportActionBar(toolbar);
@@ -75,7 +74,6 @@ public class PerfilAmigoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
-        //Recuperar usuario selecionado
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             usuarioSelecionado = (Usuario) bundle.getSerializable("usuarioSelecionado");
@@ -83,10 +81,8 @@ public class PerfilAmigoActivity extends AppCompatActivity {
             postagensUsuarioRef = ConfiguracaoFirebase.getFirebase().child("postagens")
                     .child(usuarioSelecionado.getId());
 
-            //Configura nome do usuário na toolbar
             getSupportActionBar().setTitle(usuarioSelecionado.getNome());
 
-            //Recuperar foto do usuário
             String caminhoFoto = usuarioSelecionado.getCaminhoFoto();
             if (caminhoFoto != null) {
                 Uri url = Uri.parse(caminhoFoto);
@@ -94,7 +90,6 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                         .load(url)
                         .into(imagePerfil);
             }
-
         }
 
         inicializarImageLoader();
@@ -149,24 +144,15 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        //Recupera dados de usuário logado
                         usuarioLogado = dataSnapshot.getValue(Usuario.class);
-
-                        /* Verifica se usuário já está seguindo
-                           amigo selecionado
-                         */
                         verificaSegueUsuarioAmigo();
-
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 }
         );
-
     }
 
     private void verificaSegueUsuarioAmigo() {
@@ -180,11 +166,9 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            //Já está seguindo
                             Log.i("dadosUsuario", ": Seguindo");
                             habilitarBotaoSeguir(true);
                         } else {
-                            //Ainda não está seguindo
                             Log.i("dadosUsuario", ": seguir");
                             habilitarBotaoSeguir(false);
                         }
@@ -192,11 +176,9 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 }
         );
-
     }
 
     private void habilitarBotaoSeguir(boolean segueUsuario) {
@@ -207,28 +189,17 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
             buttonAcaoPerfil.setText("Seguir");
 
-            //Adiciona evento para seguir usuário
             buttonAcaoPerfil.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    //Salvar seguidor
                     salvarSeguidor(usuarioLogado, usuarioSelecionado);
                 }
             });
-
         }
-
     }
 
     private void salvarSeguidor(Usuario uLogado, Usuario uAmigo) {
 
-        /*
-         * seguidores
-         * id_jamilton
-         *   id_seguindo
-         *       dados seguindo
-         * */
         HashMap<String, Object> dadosAmigo = new HashMap<>();
         dadosAmigo.put("nome", uAmigo.getNome());
         dadosAmigo.put("caminhoFoto", uAmigo.getCaminhoFoto());
@@ -237,7 +208,6 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                 .child(uAmigo.getId());
         seguidorRef.setValue(dadosAmigo);
 
-        //Alterar botao acao para seguindo
         buttonAcaoPerfil.setText("Seguindo");
         buttonAcaoPerfil.setOnClickListener(null);
 
@@ -262,13 +232,8 @@ public class PerfilAmigoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //Recuperar dados do amigo selecionado
         recuperarDadosPerfilAmigo();
-
-        //Recuperar dados usuario logado
         recuperarDadosUsuarioLogado();
-
     }
 
     @Override
@@ -291,7 +256,6 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                         String seguindo = String.valueOf(usuario.getSeguindo());
                         String seguidores = String.valueOf(usuario.getSeguidores());
 
-                        //Configura valores recuperados
                         textPublicacoes.setText(postagens);
                         textSeguidores.setText(seguidores);
                         textSeguindo.setText(seguindo);
@@ -300,11 +264,9 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 }
         );
-
     }
 
     private void inicializarComponentes() {

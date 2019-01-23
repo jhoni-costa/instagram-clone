@@ -43,7 +43,6 @@ public class AdapterGrid extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         final ViewHolder viewHolder;
-        //Caso a view não esteja inflada, precisamos inflar
         if (convertView == null) {
 
             viewHolder = new ViewHolder();
@@ -58,7 +57,6 @@ public class AdapterGrid extends ArrayAdapter<String> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        //Recupera dados da imagem
         String urlImagem = getItem(position);
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(urlImagem, viewHolder.imagem,

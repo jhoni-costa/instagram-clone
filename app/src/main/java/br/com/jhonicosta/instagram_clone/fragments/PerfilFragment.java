@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,6 @@ import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
 import br.com.jhonicosta.instagram_clone.activities.EditarPerfilActivity;
-import br.com.jhonicosta.instagram_clone.activities.PerfilAmigoActivity;
 import br.com.jhonicosta.instagram_clone.adapter.AdapterGrid;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
@@ -44,41 +42,36 @@ public class PerfilFragment extends Fragment {
     public GridView gridViewPerfil;
     private TextView textPublicacoes, textSeguidores, textSeguindo;
     private Button buttonAcaoPerfil;
-    private Usuario usuarioLogado;
 
     private DatabaseReference firebaseRef;
     private DatabaseReference usuariosRef;
     private DatabaseReference usuarioLogadoRef;
     private ValueEventListener valueEventListenerPerfil;
     private DatabaseReference postagensUsuarioRef;
+
     private AdapterGrid adapterGrid;
 
+    private Usuario usuarioLogado;
 
     public PerfilFragment() {
-        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
-        //Configurações iniciais
         usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         usuariosRef = firebaseRef.child("usuarios");
 
-        //Configurar referencia postagens usuario
         postagensUsuarioRef = ConfiguracaoFirebase.getFirebase()
                 .child("postagens")
                 .child(usuarioLogado.getId());
 
-        //Configurações dos componentes
         inicializarComponentes(view);
 
-        //Recuperar foto do usuário
         String caminhoFoto = usuarioLogado.getCaminhoFoto();
         Log.i("cu", caminhoFoto);
         if (caminhoFoto != null) {
@@ -88,7 +81,6 @@ public class PerfilFragment extends Fragment {
                     .into(imagePerfil);
         }
 
-        //Abre edição de perfil
         buttonAcaoPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,10 +89,8 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-        //Inicializar image loader
         inicializarImageLoader();
 
-        //Carrega as fotos das postagens de um usuário
         carregarFotosPostagem();
 
         return view;
@@ -108,12 +98,10 @@ public class PerfilFragment extends Fragment {
 
     public void carregarFotosPostagem() {
 
-        //Recupera as fotos postadas pelo usuario
         postagensUsuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //Configurar o tamanho do grid
                 int tamanhoGrid = getResources().getDisplayMetrics().widthPixels;
                 int tamanhoImagem = tamanhoGrid / 3;
                 gridViewPerfil.setColumnWidth(tamanhoImagem);
@@ -122,13 +110,11 @@ public class PerfilFragment extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Postagem postagem = ds.getValue(Postagem.class);
                     urlFotos.add(postagem.getCaminhoFoto());
-                    //Log.i("postagem", "url:" + postagem.getCaminhoFoto() );
                 }
 
                 int qtdPostagem = urlFotos.size();
                 textPublicacoes.setText(String.valueOf(qtdPostagem));
 
-                //Configurar adapter
                 adapterGrid = new AdapterGrid(getActivity(), R.layout.grid_postagem, urlFotos);
                 gridViewPerfil.setAdapter(adapterGrid);
 
@@ -175,32 +161,23 @@ public class PerfilFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         Usuario usuario = dataSnapshot.getValue(Usuario.class);
-
-                        //String postagens = String.valueOf( usuario.getPostagens() );
                         String seguindo = String.valueOf(usuario.getSeguindo());
                         String seguidores = String.valueOf(usuario.getSeguidores());
 
-                        //Configura valores recuperados
-                        //textPublicacoes.setText( postagens );
                         textSeguidores.setText(seguidores);
                         textSeguindo.setText(seguindo);
-
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 }
         );
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        //Recuperar dados do usuario logado
         recuperarDadosUsuarioLogado();
 
     }

@@ -52,19 +52,22 @@ public class FiltroActivity extends AppCompatActivity {
     }
 
     private ImageView foto;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerFiltros;
+    private TextInputEditText textDescricao;
+
     private Bitmap imagem, imagemFiltro;
+
+    private AdapterMiniaturas adapterMiniaturas;
+
+    private Usuario usuarioLogado;
     private List<ThumbnailItem> listaFiltros;
     private String idUsuarioLogado;
 
-    private TextInputEditText textDescricao;
-    private RecyclerView recyclerFiltros;
-    private AdapterMiniaturas adapterMiniaturas;
-    private ProgressBar progressBar;
-    private boolean estaCarregando;
-
-    private Usuario usuarioLogado;
     private DatabaseReference usuariosRef;
     private DatabaseReference usuarioLogadoRef;
+
+    private boolean estaCarregando;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +78,7 @@ public class FiltroActivity extends AppCompatActivity {
         idUsuarioLogado = UsuarioFirebase.getIdentificadorUsuario();
         usuariosRef = ConfiguracaoFirebase.getFirebase().child("usuarios");
 
-
-        foto = findViewById(R.id.imagemFoto);
-        recyclerFiltros = findViewById(R.id.recyclerFiltros);
-        textDescricao = findViewById(R.id.textDescricaoFiltro);
-        progressBar = findViewById(R.id.progressFiltro);
+        inicializaComponentes();
 
         recuperarDadosUsuarioLogado();
 
@@ -117,18 +116,23 @@ public class FiltroActivity extends AppCompatActivity {
 
                         @Override
                         public void onLongItemClick(View view, int position) {
-
                         }
 
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                         }
                     }
             ));
 
             recuperarFitros();
         }
+    }
+
+    private void inicializaComponentes() {
+        foto = findViewById(R.id.imagemFoto);
+        recyclerFiltros = findViewById(R.id.recyclerFiltros);
+        textDescricao = findViewById(R.id.textDescricaoFiltro);
+        progressBar = findViewById(R.id.progressFiltro);
     }
 
     private void recuperarDadosUsuarioLogado() {
@@ -226,7 +230,6 @@ public class FiltroActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    //Recuperar local da foto
                     Uri url = taskSnapshot.getDownloadUrl();
                     postagem.setCaminhoFoto(url.toString());
 

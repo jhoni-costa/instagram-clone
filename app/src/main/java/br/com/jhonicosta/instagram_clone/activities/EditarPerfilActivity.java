@@ -4,12 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +19,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import br.com.jhonicosta.instagram_clone.R;
@@ -36,13 +33,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditarPerfilActivity extends AppCompatActivity {
 
+    private static final int SELECAO_GALERIA = 200;
+
     private CircleImageView imageEditarPerfil;
     private TextView textAlterarFoto;
     private TextInputEditText editNomePerfil, editEmailPerfil;
     private Button buttonSalvarAlteracoes;
+
     private Usuario usuarioLogado;
-    private static final int SELECAO_GALERIA = 200;
+
     private StorageReference storageRef;
+
     private String identificadorUsuario;
 
     private String[] permissoes = new String[]{
@@ -55,12 +56,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editar_perfil);
 
         Permissao.validarPermissoes(permissoes, this, 1);
-        //Configurações iniciais
+
         usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
         storageRef = ConfiguracaoFirebase.getFirebaseStorage();
         identificadorUsuario = UsuarioFirebase.getIdentificadorUsuario();
 
-        //Configura toolbar
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("Editar perfil");
         setSupportActionBar(toolbar);
@@ -68,10 +68,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
-        //inicializar componentes
         inicializarComponentes();
 
-        //Recuperar dados do usuário
         FirebaseUser usuarioPerfil = UsuarioFirebase.getUsuarioAtual();
         editNomePerfil.setText(usuarioPerfil.getDisplayName().toUpperCase());
         editEmailPerfil.setText(usuarioPerfil.getEmail());
@@ -85,17 +83,14 @@ public class EditarPerfilActivity extends AppCompatActivity {
             imageEditarPerfil.setImageResource(R.drawable.avatar);
         }
 
-        //Salvar alterações do nome
         buttonSalvarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 String nomeAtualizado = editNomePerfil.getText().toString();
 
-                //atualizar nome no perfil
                 UsuarioFirebase.atualizarNomeUsuario(nomeAtualizado);
 
-                //Atualizar nome no banco de dados
                 usuarioLogado.setNome(nomeAtualizado);
                 usuarioLogado.atualizar();
 
@@ -106,7 +101,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
             }
         });
 
-        //Alterar foto do usuário
         textAlterarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +122,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
             try {
 
-                //Selecao apenas da galeria
                 switch (requestCode) {
                     case SELECAO_GALERIA:
                         Uri localImagemSelecionada = data.getData();
@@ -136,18 +129,14 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         break;
                 }
 
-                //Caso tenha sido escolhido uma imagem
                 if (imagem != null) {
 
-                    //Configura imagem na tela
                     imageEditarPerfil.setImageBitmap(imagem);
 
-                    //Recuperar dados da imagem para o firebase
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     imagem.compress(Bitmap.CompressFormat.JPEG, 70, baos);
                     byte[] dadosImagem = baos.toByteArray();
 
-                    //Salvar imagem no firebase
                     StorageReference imagemRef = storageRef
                             .child("imagens")
                             .child("perfil")
@@ -165,7 +154,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            //Recuperar local da foto
                             Uri url = taskSnapshot.getDownloadUrl();
                             atualizarFotoUsuario(url);
 
@@ -174,7 +162,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
-
 
                 }
 
@@ -188,10 +175,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
     private void atualizarFotoUsuario(Uri url) {
 
-        //Atualizar foto no perfil
         UsuarioFirebase.atualizarFotoUsuario(url);
 
-        //Atualizar foto no Firebase
         usuarioLogado.setCaminhoFoto(url.toString());
         usuarioLogado.atualizar();
 
@@ -214,7 +199,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-
         finish();
         return false;
 

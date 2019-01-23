@@ -10,11 +10,7 @@ import java.util.Map;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 
 public class Usuario implements Serializable {
-    private String id;
-    private String nome;
-    private String email;
-    private String senha;
-    private String caminhoFoto;
+    private String id, nome, email, senha, caminhoFoto;
     private int seguidores = 0, seguindo = 0, postagens = 0;
 
     public Usuario() {

@@ -21,7 +21,6 @@ import br.com.jhonicosta.instagram_clone.model.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
 
-
     private EditText campoEmail, campoSenha;
     private Button botaoEntrar;
     private ProgressBar progressBar;
@@ -38,7 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         verificarUsuarioLogado();
         inicializarComponentes();
 
-        //Fazer login do usuario
         progressBar.setVisibility(View.GONE);
         botaoEntrar.setOnClickListener(new View.OnClickListener() {
             @Override

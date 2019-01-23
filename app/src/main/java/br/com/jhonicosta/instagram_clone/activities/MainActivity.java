@@ -85,9 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.ic_perfil:
                         fragmentTransaction.replace(R.id.viewPager, new PerfilFragment()).commit();
                         return true;
-
                 }
-
                 return false;
             }
         });
