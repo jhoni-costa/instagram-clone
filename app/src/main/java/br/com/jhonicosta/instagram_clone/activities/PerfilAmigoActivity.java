@@ -172,8 +172,8 @@ public class PerfilAmigoActivity extends AppCompatActivity {
     private void verificaSegueUsuarioAmigo() {
 
         DatabaseReference seguidorRef = seguidoresRef
-                .child(idUsuarioLogado)
-                .child(usuarioSelecionado.getId());
+                .child(usuarioSelecionado.getId())
+                .child(idUsuarioLogado);
 
         seguidorRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -214,13 +214,13 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
     private void salvarSeguidor(Usuario uLogado, Usuario uAmigo) {
 
-        HashMap<String, Object> dadosAmigo = new HashMap<>();
-        dadosAmigo.put("nome", uAmigo.getNome());
-        dadosAmigo.put("caminhoFoto", uAmigo.getCaminhoFoto());
+        HashMap<String, Object> dadosUsuarioLogado = new HashMap<>();
+        dadosUsuarioLogado.put("nome", uLogado.getNome());
+        dadosUsuarioLogado.put("caminhoFoto", uLogado.getCaminhoFoto());
         DatabaseReference seguidorRef = seguidoresRef
-                .child(uLogado.getId())
-                .child(uAmigo.getId());
-        seguidorRef.setValue(dadosAmigo);
+                .child(uAmigo.getId())
+                .child(uLogado.getId());
+        seguidorRef.setValue(dadosUsuarioLogado);
 
         buttonAcaoPerfil.setText("Seguindo");
         buttonAcaoPerfil.setOnClickListener(null);
