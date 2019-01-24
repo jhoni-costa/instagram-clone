@@ -35,7 +35,8 @@
             android:name=".activities.EditarPerfilActivity"
             android:parentActivityName=".activities.MainActivity" />
         <activity android:name=".activities.PerfilAmigoActivity" />
-        <activity android:name=".activities.FiltroActivity"></activity>
+        <activity android:name=".activities.FiltroActivity" />
+        <activity android:name=".activities.VisualizarPostagemActivity"></activity>
     </application>
 
 </manifest>

@@ -1,11 +1,13 @@
 package br.com.jhonicosta.instagram_clone.activities;
 
+import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -15,7 +17,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -52,6 +53,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
     private Usuario usuarioSelecionado;
     private Usuario usuarioLogado;
+    private List<Postagem> postagens;
 
     private String idUsuarioLogado;
 
@@ -96,10 +98,21 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
         carregarFotosPostagens();
 
+
+        gridViewPerfil.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Postagem postagem = postagens.get(position);
+                Intent i = new Intent(getApplicationContext(), VisualizarPostagemActivity.class);
+                i.putExtra("postagem", postagem);
+                i.putExtra("usuario", usuarioSelecionado);
+                startActivity(i);
+            }
+        });
     }
 
     public void carregarFotosPostagens() {
-
+        postagens = new ArrayList<>();
         postagensUsuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -111,6 +124,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Postagem postagem = ds.getValue(Postagem.class);
+                    postagens.add(postagem);
                     urlsFotos.add(postagem.getCaminhoFoto());
                 }
 
@@ -270,7 +284,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
     }
 
     private void inicializarComponentes() {
-        imagePerfil = findViewById(R.id.imagePerfil);
+        imagePerfil = findViewById(R.id.imagePerfilPublicacao);
         buttonAcaoPerfil = findViewById(R.id.buttonAcaoPerfil);
         textPublicacoes = findViewById(R.id.textPublicacoes);
         textSeguidores = findViewById(R.id.textSeguidores);
