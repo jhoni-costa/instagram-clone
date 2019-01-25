@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
 import br.com.jhonicosta.instagram_clone.activities.EditarPerfilActivity;
+import br.com.jhonicosta.instagram_clone.activities.VisualizarPostagemActivity;
 import br.com.jhonicosta.instagram_clone.adapter.AdapterGrid;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
@@ -52,6 +54,7 @@ public class PerfilFragment extends Fragment {
     private AdapterGrid adapterGrid;
 
     private Usuario usuarioLogado;
+    private List<Postagem> postagens;
 
     public PerfilFragment() {
     }
@@ -73,7 +76,6 @@ public class PerfilFragment extends Fragment {
         inicializarComponentes(view);
 
         String caminhoFoto = usuarioLogado.getCaminhoFoto();
-        Log.i("cu", caminhoFoto);
         if (caminhoFoto != null) {
             Uri url = Uri.parse(caminhoFoto);
             Glide.with(getActivity())
@@ -93,11 +95,22 @@ public class PerfilFragment extends Fragment {
 
         carregarFotosPostagem();
 
+        gridViewPerfil.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Postagem postagem = postagens.get(position);
+                Intent i = new Intent(getContext(), VisualizarPostagemActivity.class);
+                i.putExtra("postagem", postagem);
+                i.putExtra("usuario", usuarioLogado);
+                startActivity(i);
+            }
+        });
+
         return view;
     }
 
     public void carregarFotosPostagem() {
-
+        postagens = new ArrayList<>();
         postagensUsuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -109,6 +122,7 @@ public class PerfilFragment extends Fragment {
                 List<String> urlFotos = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Postagem postagem = ds.getValue(Postagem.class);
+                    postagens.add(postagem);
                     urlFotos.add(postagem.getCaminhoFoto());
                 }
 
