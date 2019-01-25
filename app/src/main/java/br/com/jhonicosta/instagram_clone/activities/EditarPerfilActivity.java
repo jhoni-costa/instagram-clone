@@ -134,7 +134,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     imageEditarPerfil.setImageBitmap(imagem);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    imagem.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                    imagem.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     byte[] dadosImagem = baos.toByteArray();
 
                     StorageReference imagemRef = storageRef

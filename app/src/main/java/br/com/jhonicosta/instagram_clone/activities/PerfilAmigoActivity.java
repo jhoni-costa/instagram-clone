@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -127,7 +128,8 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                     postagens.add(postagem);
                     urlsFotos.add(postagem.getCaminhoFoto());
                 }
-
+                Collections.reverse(urlsFotos);
+                Collections.reverse(postagens);
                 adapterGrid = new AdapterGrid(getApplicationContext(), R.layout.grid_postagem, urlsFotos);
                 gridViewPerfil.setAdapter(adapterGrid);
             }

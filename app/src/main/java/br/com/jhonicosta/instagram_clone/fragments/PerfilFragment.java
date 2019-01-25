@@ -25,6 +25,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
@@ -125,13 +126,13 @@ public class PerfilFragment extends Fragment {
                     postagens.add(postagem);
                     urlFotos.add(postagem.getCaminhoFoto());
                 }
-
+                Collections.reverse(urlFotos);
+                Collections.reverse(postagens);
                 int qtdPostagem = urlFotos.size();
                 textPublicacoes.setText(String.valueOf(qtdPostagem));
 
                 adapterGrid = new AdapterGrid(getActivity(), R.layout.grid_postagem, urlFotos);
                 gridViewPerfil.setAdapter(adapterGrid);
-
             }
 
             @Override
