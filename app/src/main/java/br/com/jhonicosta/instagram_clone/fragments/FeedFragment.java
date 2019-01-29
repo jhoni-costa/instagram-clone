@@ -7,18 +7,31 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
 import br.com.jhonicosta.instagram_clone.activities.FiltroActivity;
+import br.com.jhonicosta.instagram_clone.adapter.AdapterFeed;
+import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.Permissao;
+import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
+import br.com.jhonicosta.instagram_clone.model.Feed;
 
 public class FeedFragment extends Fragment {
 
@@ -26,6 +39,11 @@ public class FeedFragment extends Fragment {
     private static final int SELECAO_GALERIA = 200;
 
     private FloatingActionButton fabCamera, fabGaleria;
+    private RecyclerView recyclerFeed;
+    private AdapterFeed adapterFeed;
+    private List<Feed> listaFeed = new ArrayList<>();
+    private ValueEventListener listenerFeed;
+    private DatabaseReference feedRef;
 
     private String[] permissoes = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -43,8 +61,19 @@ public class FeedFragment extends Fragment {
 
         Permissao.validarPermissoes(permissoes, getActivity(), 1);
 
+        feedRef = ConfiguracaoFirebase.getFirebase()
+                .child("feed")
+                .child(UsuarioFirebase.getIdentificadorUsuario());
+
+        adapterFeed = new AdapterFeed(listaFeed, getActivity());
+        recyclerFeed = view.findViewById(R.id.recyclerFeed);
         fabCamera = view.findViewById(R.id.fab_camera);
         fabGaleria = view.findViewById(R.id.fab_galeria);
+
+        recyclerFeed.setHasFixedSize(true);
+        recyclerFeed.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerFeed.setAdapter(adapterFeed);
+
 
         fabCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +97,37 @@ public class FeedFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void listarFeed() {
+        listenerFeed = feedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    listaFeed.add(ds.getValue(Feed.class));
+                }
+                Collections.reverse(listaFeed);
+                adapterFeed.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        listarFeed();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        feedRef.removeEventListener(listenerFeed);
     }
 
     @Override
