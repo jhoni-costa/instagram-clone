@@ -1,17 +1,14 @@
 package br.com.jhonicosta.instagram_clone.activities;
 
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DatabaseReference;
 
 import br.com.jhonicosta.instagram_clone.R;
-import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.model.Postagem;
 import br.com.jhonicosta.instagram_clone.model.Usuario;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,7 +66,6 @@ public class VisualizarPostagemActivity extends AppCompatActivity {
         nomeUsuario = findViewById(R.id.textNomeUsuario);
         qtdCurtidas = findViewById(R.id.textCurtidas);
         textDescricao = findViewById(R.id.textDescricao);
-        textVisualizar = findViewById(R.id.textComentarios);
     }
 
     @Override
