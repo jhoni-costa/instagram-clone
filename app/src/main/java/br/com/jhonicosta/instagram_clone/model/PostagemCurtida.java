@@ -64,4 +64,14 @@ public class PostagemCurtida implements Serializable {
         setQtdCurtidas(getQtdCurtidas() + qtd);
         curtidasRef.setValue(getQtdCurtidas());
     }
+
+    public void remover() {
+        DatabaseReference curtidasRef = ConfiguracaoFirebase.getFirebase()
+                .child("postagens-curtidas")
+                .child(feed.getId())
+                .child(usuario.getId());
+        curtidasRef.removeValue();
+
+        atualizarQuandidade(-1);
+    }
 }
