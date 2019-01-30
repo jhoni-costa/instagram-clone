@@ -23,8 +23,10 @@ import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
+import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
 import br.com.jhonicosta.instagram_clone.model.Feed;
 import br.com.jhonicosta.instagram_clone.model.PostagemCurtida;
+import br.com.jhonicosta.instagram_clone.model.Usuario;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> {
@@ -46,7 +48,8 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int i) {
-        Feed feed = listaFeed.get(i);
+        final Feed feed = listaFeed.get(i);
+        final Usuario usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
 
         Uri uriFotoUsuario = Uri.parse(feed.getFotoUsuario());
         Uri uriFotoPostagem = Uri.parse(feed.getFotoPostagem());
@@ -63,16 +66,20 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
         curtidasRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int qtdCurtidas = 0;
+                int qtdCurtida = 0;
                 if (dataSnapshot.hasChild("qtdCurtidas")) {
-                    PostagemCurtida postagemCurtida = dataSnapshot.getValue(PostagemCurtida.class);
-                    qtdCurtidas = postagemCurtida.getQtdCurtidas();
+                    PostagemCurtida pc = dataSnapshot.getValue(PostagemCurtida.class);
+                    qtdCurtida = pc.getQtdCurtidas();
                 }
+                final PostagemCurtida curtida = new PostagemCurtida();
+                curtida.setFeed(feed);
+                curtida.setUsuario(usuarioLogado);
+                curtida.setQtdCurtidas(qtdCurtida);
 
                 myViewHolder.likeButton.setOnLikeListener(new OnLikeListener() {
                     @Override
                     public void liked(LikeButton likeButton) {
-
+                        curtida.salvar();
                     }
 
                     @Override
