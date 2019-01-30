@@ -1,6 +1,7 @@
 package br.com.jhonicosta.instagram_clone.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.like.OnLikeListener;
 import java.util.List;
 
 import br.com.jhonicosta.instagram_clone.R;
+import br.com.jhonicosta.instagram_clone.activities.ComentariosActivity;
 import br.com.jhonicosta.instagram_clone.helper.ConfiguracaoFirebase;
 import br.com.jhonicosta.instagram_clone.helper.UsuarioFirebase;
 import br.com.jhonicosta.instagram_clone.model.Feed;
@@ -59,6 +61,15 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
 
         myViewHolder.descricao.setText(feed.getDescricao());
         myViewHolder.nome.setText(feed.getNomeUsuario());
+
+        myViewHolder.visualizarComentarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, ComentariosActivity.class);
+                i.putExtra("idPostagem", feed.getId());
+                context.startActivity(i);
+            }
+        });
 
         DatabaseReference curtidasRef = ConfiguracaoFirebase.getFirebase()
                 .child("postagens-curtidas")
