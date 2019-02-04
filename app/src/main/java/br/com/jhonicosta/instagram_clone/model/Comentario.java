@@ -66,6 +66,7 @@ public class Comentario implements Serializable {
         DatabaseReference comentariosRef = ConfiguracaoFirebase.getFirebase()
                 .child("comentarios")
                 .child(getIdPostagem());
+
         String chaveComentario = comentariosRef.push().getKey();
         setIdComentario(chaveComentario);
         comentariosRef.child(getIdComentario()).setValue(this);
